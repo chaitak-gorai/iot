@@ -1,0 +1,62 @@
+#include <DHT.h>
+#include <WiFi.h>
+#include <WiFiClient.h>
+#include <WiFiUdp.h>
+#include <ThingSpeak.h>
+
+// Define the pins for the DHT11 sensor
+#define DHTPIN 2
+#define DHTTYPE DHT11
+
+// Define your WiFi network credentials
+const char* ssid = "your_SSID";
+const char* password = "your_PASSWORD";
+
+// Define your ThingSpeak API key
+const char* apiKey = "your_API_KEY";
+
+// Initialize the DHT11 sensor and the WiFi client
+DHT dht(DHTPIN, DHTTYPE);
+WiFiClient client;
+
+void setup() {
+  // Initialize the serial communication for debugging
+  Serial.begin(9600);
+
+  // Connect to the WiFi network
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi...");
+  }
+  Serial.println("Connected to WiFi");
+
+  // Initialize the ThingSpeak library with your API key
+  ThingSpeak.begin(client);
+}
+
+void loop() {
+  // Read the temperature and humidity from the DHT11 sensor
+  float temperature = dht.readTemperature();
+  float humidity = dht.readHumidity();
+
+  // Print the temperature and humidity to the serial monitor for debugging
+  Serial.print("Temperature: ");
+  Serial.print(temperature);
+  Serial.println(" °C");
+  Serial.print("Humidity: ");
+  Serial.print(humidity);
+  Serial.println(" %");
+
+  // Upload the temperature and humidity to ThingSpeak
+  ThingSpeak.setField(1, temperature);
+  ThingSpeak.setField(2, humidity);
+  int response = ThingSpeak.writeFields(1, apiKey);
+
+  // Print the response code from ThingSpeak to the serial monitor for debugging
+  Serial.print("ThingSpeak response code: ");
+  Serial.println(response);
+
+  // Wait for a short period before reading the sensor again
+  delay(10000);
+}

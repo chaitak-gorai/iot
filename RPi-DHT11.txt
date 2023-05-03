@@ -1,0 +1,19 @@
+# sudo pip3 install Adafruit_DHT
+
+import Adafruit_DHT
+import time
+
+sensor = Adafruit_DHT.DHT11
+pin = 4    # replace with the GPIO pin you have connected your DHT11 sensor to
+
+while True:
+    humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
+
+    if humidity is not None and temperature is not None:
+        print('Temperature: {0:0.1f}°C'.format(temperature))
+        print('Humidity: {0:0.1f}%'.format(humidity))
+    else:
+        print('Failed to read sensor data')
+
+    time.sleep(2)   # wait for 2 seconds before reading the sensor again
+

@@ -1,0 +1,60 @@
+/*The HC-SR04 ultrasonic distance sensor. This economical sensor provides 2cm to 400cm of non-contact measurement functionality with a ranging accuracy that can reach up to 3mm. Each HC-SR04 module includes an ultrasonic transmitter, a receiver and a control circuit.
+
+There are only four pins that you need to worry about on the HC-SR04: VCC (Power), Trig (Trigger), Echo (Receive), and GND (Ground).
+
+*/
+
+// Include the LiquidCrystal library
+#include <LiquidCrystal.h>
+
+// Define the pins for the ultrasonic sensor
+const int trigPin = 2;
+const int echoPin = 3;
+
+// Define the pins for the LCD
+const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+
+void setup() {
+  // Initialize the serial communication for debugging
+  Serial.begin(9600);
+
+  // Set the trigger pin as an output and the echo pin as an input
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+
+  // Initialize the LCD with 16 columns and 2 rows
+  lcd.begin(16, 2);
+
+  // Print a message to the LCD
+  lcd.print("Distance: ");
+}
+
+void loop() {
+  // Send a 10 microsecond pulse to the trigger pin to start a measurement
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  // Measure the duration of the echo pulse and convert it to distance in centimeters
+  long duration = pulseIn(echoPin, HIGH);
+  float distance = duration * 0.034 / 2;
+
+  // Print the distance to the serial monitor for debugging
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  // Clear the LCD and print the distance
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Distance: ");
+  lcd.setCursor(0, 1);
+  lcd.print(distance);
+  lcd.print(" cm");
+
+  // Wait for a short period before measuring the distance again
+  delay(100);
+}

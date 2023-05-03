@@ -1,0 +1,16 @@
+import RPi.GPIO as GPIO
+import time
+
+GPIO.setmode(GPIO.BCM)
+
+led_pins = [17, 18, 19]   # replace with the pins you have connected your LEDs to
+
+for pin in led_pins:
+    GPIO.setup(pin, GPIO.OUT)
+
+while True:
+    for pin in led_pins:
+        GPIO.output(pin, GPIO.HIGH)    # turn the LED on
+        time.sleep(0.5)                # wait for half a second
+        GPIO.output(pin, GPIO.LOW)     # turn the LED off
+        time.sleep(0.5)                # wait for half a second
